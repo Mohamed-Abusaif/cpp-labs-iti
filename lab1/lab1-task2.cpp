@@ -29,7 +29,14 @@ public:
         }
         else if (real != 0 && imag != 0)
         {
-            cout << real << " + " << imag << "j" << endl;
+            if (imag > 0)
+            {
+                cout << real << " + " << imag << "j" << endl;
+            }
+            else
+            {
+                cout << real << imag << "j" << endl;
+            }
         }
         else if (imag == 0 && real != 0)
         {
@@ -86,7 +93,7 @@ int main()
 we have z(imaginary number) = a(real part) + b(imaginary part)i(imaginary unit)
 addition -> if we have 2 imaginary numbers z1,z2 the addition is -> z1(a+bi) + z2(c+di) = (a+c) + (b+d)i
 subtraction -> if we have 2 imaginary numbers z1,z2 the addition is -> z1(a+bi) - z2(c+di) = (a-c) - (b-d)i
-imaginary numbers are not negative nor positive 
+imaginary numbers are not negative nor positive
 
 
 */
