@@ -2,7 +2,7 @@
 using namespace std;
 class Complex
 {
-    int real, imag;
+    signed int real, imag;
 
 public:
     void setReal(int r)
@@ -27,7 +27,7 @@ public:
         {
             cout << imag << "j" << endl;
         }
-        else if (real > 0 && imag > 0)
+        else if (real != 0 && imag != 0)
         {
             cout << real << " + " << imag << "j" << endl;
         }
@@ -66,9 +66,11 @@ int main()
     c1.setReal(10);
     c2.setImag(20);
     c2.setReal(30);
-
+    c1.display();
     // c3 = c1.addImaginaryNumber(c2);
     c3 = c1.subtractImaginaryNumber(c2);
+    cout << c3.getImag() << endl;
+    cout << c3.getReal() << endl;
 
     c3.display();
 
@@ -84,7 +86,7 @@ int main()
 we have z(imaginary number) = a(real part) + b(imaginary part)i(imaginary unit)
 addition -> if we have 2 imaginary numbers z1,z2 the addition is -> z1(a+bi) + z2(c+di) = (a+c) + (b+d)i
 subtraction -> if we have 2 imaginary numbers z1,z2 the addition is -> z1(a+bi) - z2(c+di) = (a-c) - (b-d)i
-
+imaginary numbers are not negative nor positive 
 
 
 */
