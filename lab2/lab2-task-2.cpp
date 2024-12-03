@@ -1,3 +1,5 @@
+
+#include <iostream>
 #include <stdio.h>
 #ifdef _WIN32
 #include <windows.h>
@@ -9,7 +11,7 @@
 #define UP 65
 #define DOWN 66
 
-#define EMP_SIZE 100
+using namespace std;
 
 // ANSI color codes
 #define RESET_COLOR "\033[0m"
@@ -17,25 +19,79 @@
 #define GREEN_COLOR "\033[32m"
 #define YELLOW_COLOR "\033[33m"
 #define BLUE_COLOR "\033[34m"
+
 // Structs
 typedef struct BD
 {
-
     int day;
     int month;
     int year;
-
 } BD;
 
 typedef struct Employee
 {
-    /* data */
     char name[10];
     int emp_id;
     int age;
     int salary;
     BD bd;
 } Employee;
+
+// Stack class implementation
+class Stack
+{
+private:
+    int top;
+    int size;
+    Employee *items;
+
+public:
+    Stack(int size)
+    {
+        this->size = size;
+        items = new Employee[size];
+        top = -1;
+    }
+
+    bool push(Employee data)
+    {
+        if (top == size - 1)
+        {
+            return false; // Stack is full
+        }
+        items[++top] = data;
+        return true; // Push successful
+    }
+
+    void pop()
+    {
+        if (top == -1)
+        {
+            return; // Stack is empty
+        }
+        top--;
+    }
+
+    void display()
+    {
+        if (top == -1)
+        {
+            cout << "Stack is empty" << endl;
+            return;
+        }
+        cout << "Stack: " << endl;
+        for (int i = top; i >= 0; i--)
+        {
+            cout << "Employee Name: " << items[i].name << endl;
+            cout << "Employee ID: " << items[i].emp_id << endl;
+            cout << "Employee Age: " << items[i].age << endl;
+            cout << "Employee Salary: " << items[i].salary << endl;
+            cout << "Employee Birth Date: " << items[i].bd.day << "/" << items[i].bd.month << "/" << items[i].bd.year << endl;
+            cout << "------------------------------" << endl;
+        }
+    }
+};
+
 // Function to move the cursor to a specific position
 void gotoxy(int x, int y)
 {
@@ -48,6 +104,7 @@ void gotoxy(int x, int y)
     printf("\033[%d;%dH", y, x);
 #endif
 }
+
 // Function to get a single character without echoing it to the console
 int getch(void)
 {
@@ -66,14 +123,15 @@ int getch(void)
 
     return ch;
 }
+
 // Function to display the menu
-void DisplayMenu(int currentPostion, int row, int col)
+void DisplayMenu(int currentPosition, int row, int col)
 {
     printf("\033[H\033[J"); // Clear screen
 
     // "New" option
     gotoxy(col / 2 - 4, 1);
-    if (currentPostion == 0)
+    if (currentPosition == 0)
     {
         printf("%sNew%s", GREEN_COLOR, RESET_COLOR);
     }
@@ -82,9 +140,9 @@ void DisplayMenu(int currentPostion, int row, int col)
         printf("%sNew%s", BLUE_COLOR, RESET_COLOR);
     }
 
-    // "Display" option 1
+    // "Display" option
     gotoxy(col / 2 - 4, 3);
-    if (currentPostion == 1)
+    if (currentPosition == 1)
     {
         printf("%sDisplay Employees%s", GREEN_COLOR, RESET_COLOR);
     }
@@ -93,20 +151,20 @@ void DisplayMenu(int currentPostion, int row, int col)
         printf("%sDisplay Employees%s", BLUE_COLOR, RESET_COLOR);
     }
 
-    // "Modify" option
+    // "Delete" option
     gotoxy(col / 2 - 4, 5);
-    if (currentPostion == 2)
+    if (currentPosition == 2)
     {
-        printf("%sModify Employee%s", GREEN_COLOR, RESET_COLOR);
+        printf("%sDelete Employee%s", GREEN_COLOR, RESET_COLOR);
     }
     else
     {
-        printf("%sModify Employee%s", BLUE_COLOR, RESET_COLOR);
+        printf("%sDelete Employee%s", BLUE_COLOR, RESET_COLOR);
     }
 
     // "Exit" option
     gotoxy(col / 2 - 4, 7);
-    if (currentPostion == 3)
+    if (currentPosition == 3)
     {
         printf("%sExit%s", GREEN_COLOR, RESET_COLOR);
     }
@@ -118,12 +176,10 @@ void DisplayMenu(int currentPostion, int row, int col)
 
 int main(void)
 {
-    int row = 20, col = 20, currentPostion = 0, ch, flagExitScreen = 1;
-    int flagExitCurrentScreen = 1;
-    Employee empArray[EMP_SIZE];
-    int employeeCount = 0;
+    int row = 20, col = 20, currentPosition = 0, ch, flagExitScreen = 1;
+    Stack empStack(100);
 
-    DisplayMenu(currentPostion, row, col);
+    DisplayMenu(currentPosition, row, col);
 
     while (flagExitScreen)
     {
@@ -136,168 +192,79 @@ int main(void)
                 ch = getch();
                 if (ch == UP)
                 {
-                    currentPostion = (currentPostion - 1 + 4) % 4; // Cycle 4 options
+                    currentPosition = (currentPosition - 1 + 4) % 4; // Cycle 4 options
                 }
                 else if (ch == DOWN)
                 {
-                    currentPostion = (currentPostion + 1) % 4;
+                    currentPosition = (currentPosition + 1) % 4;
                 }
             }
         }
 
         if (ch == 10)
         { // Check if Enter key is pressed
-            if (currentPostion == 0)
+            if (currentPosition == 0)
             {
-
                 printf("\033[H\033[J"); // Clear screen
                 gotoxy(col / 2 - 4, 3);
-
                 printf(" %sAdd New Employee%s \n", BLUE_COLOR, RESET_COLOR);
-                int i = 0;
-                while (flagExitCurrentScreen == 1 && i < EMP_SIZE)
+                Employee emp;
+                // Ensure proper input handling
+                printf("Enter Employee Name: ");
+                scanf("%s", emp.name);
+                printf("Enter Employee ID: ");
+                scanf("%d", &emp.emp_id);
+                printf("Enter Employee Age: ");
+                scanf("%d", &emp.age);
+                printf("Enter Employee Salary: ");
+                scanf("%d", &emp.salary);
+                printf("Enter Employee Birth Date (day month year): ");
+                scanf("%d %d %d", &emp.bd.day, &emp.bd.month, &emp.bd.year);
+                if (empStack.push(emp))
                 {
-
-                    printf("Enter Employee Name:");
-                    scanf("%s", &empArray[i].name);
-                    while (getchar() != '\n')
-                        ; // Clear input buffer
-
-                    printf("Enter Employee ID:");
-                    scanf("%d", &empArray[i].emp_id);
-                    while (getchar() != '\n')
-                        ;
-
-                    printf("Enter Employee Age:");
-                    scanf("%d", &empArray[i].age);
-                    while (getchar() != '\n')
-                        ;
-
-                    printf("Enter Employee Salary:");
-                    scanf("%d", &empArray[i].salary);
-                    while (getchar() != '\n')
-                        ;
-
-                    printf("Enter Employee day Birth Date:");
-                    scanf("%d", &empArray[i].bd.day);
-                    while (getchar() != '\n')
-                        ;
-
-                    printf("Enter Employee month Birth Date:");
-                    scanf("%d", &empArray[i].bd.month);
-                    while (getchar() != '\n')
-                        ;
-
-                    printf("Enter Employee year Birth Date:");
-                    scanf("%d", &empArray[i].bd.year);
-                    while (getchar() != '\n')
-                        ;
-
-                    employeeCount++; // Increment the employee count
-
-                    printf("Do You Want to Add New Employee? \n");
-                    printf("Press (y) to add new employee, (n) to exit to main menu! \n");
-                    ch = getch();
-                    if (ch == 'n' || employeeCount == EMP_SIZE)
-                    {
-                        flagExitCurrentScreen = 0;
-                    }
-                    i++;
+                    printf("Employee added successfully!\n");
                 }
+                else
+                {
+                    printf("Failed to add employee. Stack is full!\n");
+                }
+                // Pause to allow user to see the message
+                printf("Press any key to return to the menu...");
+                getch();
             }
-            else if (currentPostion == 1)
+            else if (currentPosition == 1)
             {
-
                 printf("\033[H\033[J");
                 gotoxy(col / 2 - 4, 3);
                 printf(" %sEmployees Database%s \n", RED_COLOR, RESET_COLOR);
-                for (int i = 0; i < employeeCount; i++)
-                {
-                    printf("------------------------------\n");
-                    printf("New Employee Name %d:  %s \n", i, empArray[i].name);
-                    printf("New Employee ID %d:  %d \n", i, empArray[i].emp_id);
-                    printf("Enter Employee Age %d:  %d \n", i, empArray[i].age);
-                    printf("Enter Employee Salary %d: %d \n", i, empArray[i].salary);
-                    printf("Enter Employee day Birth Date %d: %d \n", i, empArray[i].bd.day);
-                    printf("Enter Employee month Birth Date %d: %d \n", i, empArray[i].bd.month);
-                    printf("Enter Employee year Birth Date %d: %d \n", i, empArray[i].bd.year);
-                    printf("------------------------------\n");
-                }
+                empStack.display();
                 gotoxy(col / 2 - 4, 4);
                 printf("----------------------");
+                printf("Press any key to return to the menu...");
                 getch();
-                flagExitScreen = 1;
             }
-            else if (currentPostion == 2)
+            else if (currentPosition == 2)
             {
+                empStack.pop();
                 printf("\033[H\033[J");
                 gotoxy(col / 2 - 4, 3);
-                int i = 0;
-                printf(" %sModify Employee Functionality!%s \n", YELLOW_COLOR, RESET_COLOR);
-
-                // implement modify employee
-
-                printf("Enter Employee ID to Modify:");
-                scanf("%d", &empArray[i].emp_id);
-                while (getchar() != '\n')
-                    ;
-                printf("Enter Employee Name:");
-                scanf("%s", &empArray[i].name);
-                while (getchar() != '\n')
-                    ;
-
-                printf("Enter Employee Age:");
-                scanf("%d", &empArray[i].age);
-                while (getchar() != '\n')
-                    ;
-
-                printf("Enter Employee Salary:");
-                scanf("%d", &empArray[i].salary);
-                while (getchar() != '\n')
-                    ;
-
-                printf("Enter Employee day Birth Date:");
-                scanf("%d", &empArray[i].bd.day);
-                while (getchar() != '\n')
-                    ;
-
-                printf("Enter Employee month Birth Date:");
-                scanf("%d", &empArray[i].bd.month);
-                while (getchar() != '\n')
-                    ;
-
-                printf("Enter Employee year Birth Date:");
-                scanf("%d", &empArray[i].bd.year);
-                while (getchar() != '\n')
-                    ;
-
-                printf("Do You Want to Modify Another Employee? \n");
-                printf("Press (y) to modify new employee, (n) to exit to main menu! \n");
-                ch = getch();
-                if (ch == 110 || i == EMP_SIZE)
-                {
-                    flagExitCurrentScreen = 0;
-                }
-                i++;
+                printf(" %sEmployee Deleted!%s \n", YELLOW_COLOR, RESET_COLOR);
+                printf("Press any key to return to the menu...");
+                getch();
             }
-
-            else if (currentPostion == 3)
+            else if (currentPosition == 3)
             {
-
                 printf("\033[H\033[J");
                 gotoxy(col / 2 - 10, 3);
                 printf(" %sPress Enter to Exit!%s \n", RED_COLOR, RESET_COLOR);
-
                 gotoxy(col / 2 - 15, 4);
-
                 flagExitScreen = 0;
             }
         }
 
         if (flagExitScreen)
         {
-
-            DisplayMenu(currentPostion, row, col);
+            DisplayMenu(currentPosition, row, col);
         }
     }
 
