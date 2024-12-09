@@ -156,8 +156,8 @@ int main()
 
     Picture myPic(10);
 
-    Text * t1 = new Text("Ahmed", 250, 10, CYAN); 
-    Text * t2 =  new Text("Essam", 250, 80, LIGHTBLUE);  
+    Text * t1 = new Text("Mohamed", 250, 10, CYAN); 
+    Text * t2 =  new Text("Abusaif", 250, 80, LIGHTBLUE);  
     myPic.addShape(t1);
     myPic.addShape(t2);
 
